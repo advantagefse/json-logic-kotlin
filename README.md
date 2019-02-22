@@ -1,5 +1,5 @@
 # json-logic-kotlin
-[ ![Download](https://api.bintray.com/packages/advantagefse/json-logic-kotlin/eu.afse.jsonlogic/images/download.svg?version=0.9) ](https://bintray.com/advantagefse/json-logic-kotlin/eu.afse.jsonlogic/0.9/link)
+[ ![Download](https://api.bintray.com/packages/advantagefse/json-logic-kotlin/eu.afse.jsonlogic/images/download.svg) ](https://bintray.com/advantagefse/json-logic-kotlin/eu.afse.jsonlogic/_latestVersion)
 
 This is a pure Kotlin implementation of JsonLogic http://jsonlogic.com rule engine. JsonLogic is documented extensively at [JsonLogic.com](http://jsonlogic.com), including examples of every [supported operation](http://jsonlogic.com/operations.html).
 
@@ -8,7 +8,7 @@ This is a pure Kotlin implementation of JsonLogic http://jsonlogic.com rule engi
 Gradle
 
 ```groovy
-implementation 'eu.afse:eu.afse.jsonlogic:0.9'
+implementation 'eu.afse:eu.afse.jsonlogic:0.9.1'
 ```
 
 Maven

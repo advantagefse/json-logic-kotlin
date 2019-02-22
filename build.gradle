@@ -6,7 +6,7 @@ plugins {
 apply plugin: 'maven-publish'
 
 group 'eu.afse'
-version '0.9'
+version '0.9.1'
 
 repositories {
     mavenCentral()
