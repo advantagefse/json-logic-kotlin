@@ -13,7 +13,7 @@ internal val String?.parse: Any?
         }
     }
 
-internal val Any?.truthy: Boolean
+val Any?.truthy: Boolean
     get() = when (this) {
         null -> false
         is Boolean -> this
