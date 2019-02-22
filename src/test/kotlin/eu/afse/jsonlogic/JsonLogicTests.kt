@@ -15,7 +15,9 @@ private const val testUrl = "http://jsonlogic.com/tests.json"
 
 class JsonLogicTests {
 
-    private data class JsonLogicTest(val title: String, val rule: String, val data: String, val expected: String)
+    private val gson = GsonBuilder().create()
+
+    private data class JsonLogicTest(val title: String, val rule: Any?, val data: Any?, val expected: Any?)
 
     private fun officialTests() = mutableListOf<JsonLogicTest>().apply {
         val gson = GsonBuilder().create()
@@ -24,18 +26,20 @@ class JsonLogicTests {
             when (it) {
                 is String -> category = it
                 is List<*> -> {
-                    val rule = gson.toJson(it[0])
-                    val data = gson.toJson(it[1])
-                    val expected = gson.toJson(it[2])
-                    add(JsonLogicTest("${it[0]}, ${it[1]} $category", rule, data, expected))
+                    add(JsonLogicTest("${it[0]}, ${it[1]} $category", it[0], it[1], it[2]))
                 }
             }
         }
     }
 
     @TestFactory
-    fun translateDynamicTests(): Collection<DynamicTest> = officialTests().map {
-        DynamicTest.dynamicTest(it.title) { assertEquals(it.expected, JsonLogic().apply(it.rule, it.data)) }
+    fun dynamicStringTests(): Collection<DynamicTest> = officialTests().map {
+        DynamicTest.dynamicTest(it.title) { assertEquals(gson.toJson(it.expected), JsonLogic().apply(gson.toJson(it.rule), gson.toJson(it.data))) }
+    }
+
+    @TestFactory
+    fun dynamicTests(): Collection<DynamicTest> = officialTests().map {
+        DynamicTest.dynamicTest(it.title) { assertEquals(gson.toJson(it.expected).unStringify.noSpaces, JsonLogic().apply(it.rule, it.data).unStringify.noSpaces) }
     }
 
     @Test
@@ -46,7 +50,7 @@ class JsonLogicTests {
     }
 
     @Test
-    fun compound() {
+    fun compoundString() {
         val jsonLogic = JsonLogic()
         val result = jsonLogic.apply(
                 "{\"and\" : [" +
@@ -57,13 +61,35 @@ class JsonLogicTests {
     }
 
     @Test
-    fun data() {
+    fun compound() {
+        val jsonLogic = JsonLogic()
+        val logic = mapOf(
+            "and" to listOf(
+                mapOf(">" to listOf(3, 1)),
+                mapOf("<" to listOf(1, 3))
+            )
+        )
+        val result = jsonLogic.apply(logic)
+        assertEquals("true", result)
+    }
+
+    @Test
+    fun dataString() {
         val jsonLogic = JsonLogic()
         val result = jsonLogic.apply(
             "{ \"var\" : [\"a\"] }", // Rule
             "{ a : 1, b : 2 }" // Data
         )
         assertEquals("1.0", result)
+    }
+
+    @Test
+    fun data() {
+        val jsonLogic = JsonLogic()
+        val rule = mapOf("var" to listOf("a"))
+        val data = mapOf("a" to 1, "b" to 2)
+        val result = jsonLogic.apply(rule, data)
+        assertEquals("1", result)
     }
 
     @Test
@@ -112,5 +138,20 @@ class JsonLogicTests {
         jsonLogic.addOperation("Math.random") { _, _ -> Math.random() }
         val result = jsonLogic.apply("{\"Math.random\":[]}", "{}")
         assert(result.toDouble() in 0.0..1.0)
+    }
+
+    @Test
+    fun customOperation4() {
+        val jsonLogic = JsonLogic()
+        jsonLogic.addOperation("pow") { l, _ ->
+            try {
+                if (l != null && l.size > 1) Math.pow(l[0].toString().toDouble(), l[1].toString().toDouble())
+                else null
+            } catch (e: Exception) {
+                null
+            }
+        }
+        val result = jsonLogic.apply(mapOf("pow" to listOf(3,2)))
+        assertEquals("9.0", result)
     }
 }

@@ -24,7 +24,7 @@ Maven
 
 ## Examples
 
-Typically jsonLogic will be called with a rule object and optionally a data object. Both rules and data input are JSON formatted strings.
+Typically jsonLogic will be called with a rule object and optionally a data object. Both parameters can either be JSON formatted strings or Any Kotlin objects.
 
 ### Simple
 
@@ -37,7 +37,7 @@ JsonLogic().apply("{\"==\":[1,1]}")
 
 ### Compound
 
-An example with nested rules
+An example with nested rules as strings
 ```kotlin
 val jsonLogic = JsonLogic()
 jsonLogic.apply(
@@ -49,13 +49,36 @@ jsonLogic.apply(
 //true
 ```
 
+An example with nested rules as objects
+```kotlin
+val jsonLogic = JsonLogic()
+val logic = mapOf(
+    "and" to listOf(
+        mapOf(">" to listOf(3, 1)),
+        mapOf("<" to listOf(1, 3))
+    )
+)
+jsonLogic.apply(logic)
+//true
+```
+
 ### Data-Driven
 
 You can use the var operator to get attributes of the data object
 
 ```kotlin
 val jsonLogic = JsonLogic()
-val result = jsonLogic.apply(
+val rule = mapOf("var" to listOf("a"))
+val data = mapOf("a" to 1, "b" to 2)
+jsonLogic.apply(rule, data)
+//1
+```
+
+or with json string parameters
+
+```kotlin
+val jsonLogic = JsonLogic()
+jsonLogic.apply(
     "{ \"var\" : [\"a\"] }", // Rule
     "{ a : 1, b : 2 }" // Data
 )
@@ -90,6 +113,21 @@ jsonLogic.apply("{\"sqrt\":\"9\"}")
 //3
 ```
 
+An example passing object parameters
+
+```kotlin
+val jsonLogic = JsonLogic()
+jsonLogic.addOperation("pow") { l, _ ->
+    try {
+        if (l != null && l.size > 1) Math.pow(l[0].toString().toDouble(), l[1].toString().toDouble())
+        else null
+    } catch (e: Exception) {
+        null
+    }
+}
+jsonLogic.apply(mapOf("pow" to listOf(3,2)))
+//9
+```
 ## Compatibility
 
 This implementation is as close as it gets to the [JS implementation](https://github.com/jwadhams/json-logic-js/) and passes all the official [Unit Tests](http://jsonlogic.com/tests.json).

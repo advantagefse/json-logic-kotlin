@@ -16,6 +16,15 @@ class JsonLogic {
         ?: logic, data.parse).toString()
 
     /**
+     * Apply logic on data and get a result
+     *
+     * @param logic the logic
+     * @param data the data
+     * @return evaluation result
+     */
+    fun apply(logic: Any?, data: Any? = null) = evaluate(logic, data).toString()
+
+    /**
      * Add new operations http://jsonlogic.com/add_operation.html
      *
      * @param operator the operator to be added
