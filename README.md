@@ -5,8 +5,21 @@ This is a pure Kotlin implementation of JsonLogic http://jsonlogic.com rule engi
 
 ## Installation
 
+Gradle
+
 ```groovy
 implementation 'eu.afse:eu.afse.jsonlogic:0.9'
+```
+
+Maven
+
+```xml
+<dependency>
+  <groupId>eu.afse</groupId>
+  <artifactId>eu.afse.jsonlogic</artifactId>
+  <version>0.9</version>
+  <type>pom</type>
+</dependency>
 ```
 
 ## Examples
