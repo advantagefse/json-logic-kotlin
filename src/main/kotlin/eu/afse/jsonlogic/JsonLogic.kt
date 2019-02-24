@@ -12,6 +12,7 @@ class JsonLogic {
      * @param data the data as a json encoded string
      * @return evaluation result
      */
+    @JvmOverloads
     fun apply(logic: String?, data: String? = null) = evaluate(logic.parse as? Map<*, *>
         ?: logic, data.parse).toString()
 
@@ -22,6 +23,7 @@ class JsonLogic {
      * @param data the data
      * @return evaluation result
      */
+    @JvmOverloads
     fun apply(logic: Any?, data: Any? = null) = evaluate(logic, data).toString()
 
     /**
