@@ -191,7 +191,7 @@ class JsonLogic {
                 value = if (indexParts.size == 1) value[indexParts[0].intValue] else getRecursive(indexParts, value)
             }
             is Map<*, *> -> varName.unStringify.split(".").forEach {
-                value = (value as? Map<*, *>)?.getOrDefault(it, null)
+                value = (value as? Map<*, *>)?.get(it)
             }
         }
         if ((value == data || value == null) && values is List<*> && values.size > 1) {
