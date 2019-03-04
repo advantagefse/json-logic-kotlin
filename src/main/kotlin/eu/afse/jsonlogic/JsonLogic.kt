@@ -230,7 +230,7 @@ class JsonLogic {
 
     private fun compareStrict(a: Comparable<*>?, b: Comparable<*>?) = when {
         a is Number && b is Number -> compareValues(a.toDouble(), b.toDouble())
-        a is String && b is String -> compareValues(a.doubleValue, b.doubleValue)
+        a is String && b is String -> compareValues(a.unStringify, b.unStringify)
         else -> -1
     }
 

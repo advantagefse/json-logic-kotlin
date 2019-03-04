@@ -154,4 +154,13 @@ class JsonLogicTests {
         val result = jsonLogic.apply(mapOf("pow" to listOf(3,2)))
         assertEquals("9.0", result)
     }
+
+    @Test
+    fun stringComparisonBug() {
+        val jsonLogic = JsonLogic()
+        val logic = mapOf("===" to listOf(mapOf("var" to listOf("a")), "two"))
+        val data = mapOf("a" to "one")
+        val result = jsonLogic.apply(logic, data)
+        assertEquals("false", result)
+    }
 }
