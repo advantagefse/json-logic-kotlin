@@ -8,7 +8,7 @@ This is a pure Kotlin implementation of JsonLogic http://jsonlogic.com rule engi
 Gradle
 
 ```groovy
-implementation 'eu.afse:eu.afse.jsonlogic:0.9.2'
+implementation 'eu.afse:eu.afse.jsonlogic:0.9.3'
 ```
 
 Maven
@@ -17,7 +17,7 @@ Maven
 <dependency>
   <groupId>eu.afse</groupId>
   <artifactId>eu.afse.jsonlogic</artifactId>
-  <version>0.9.2</version>
+  <version>0.9.3</version>
   <type>pom</type>
 </dependency>
 ```
