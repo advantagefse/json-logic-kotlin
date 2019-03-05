@@ -1,5 +1,5 @@
 .idea/*
 .gradle/*
-gradle/*
+gradle/wrapper/gradle-wrapper.jar
 out/
 build/*
