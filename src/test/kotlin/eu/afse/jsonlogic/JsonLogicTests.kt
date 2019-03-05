@@ -2,6 +2,7 @@ package eu.afse.jsonlogic
 
 import com.google.gson.*
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
@@ -34,12 +35,22 @@ class JsonLogicTests {
 
     @TestFactory
     fun dynamicStringTests(): Collection<DynamicTest> = officialTests().map {
-        DynamicTest.dynamicTest(it.title) { assertEquals(gson.toJson(it.expected), JsonLogic().apply(gson.toJson(it.rule), gson.toJson(it.data))) }
+        DynamicTest.dynamicTest(it.title) {
+            assertEquals(
+                gson.toJson(it.expected),
+                JsonLogic().apply(gson.toJson(it.rule), gson.toJson(it.data))
+            )
+        }
     }
 
     @TestFactory
     fun dynamicTests(): Collection<DynamicTest> = officialTests().map {
-        DynamicTest.dynamicTest(it.title) { assertEquals(gson.toJson(it.expected).unStringify.noSpaces, JsonLogic().apply(it.rule, it.data).unStringify.noSpaces) }
+        DynamicTest.dynamicTest(it.title) {
+            assertEquals(
+                gson.toJson(it.expected).unStringify.noSpaces,
+                JsonLogic().apply(it.rule, it.data).unStringify.noSpaces
+            )
+        }
     }
 
     @Test
@@ -53,10 +64,11 @@ class JsonLogicTests {
     fun compoundString() {
         val jsonLogic = JsonLogic()
         val result = jsonLogic.apply(
-                "{\"and\" : [" +
-                "    { \">\" : [3,1] }," +
-                "    { \"<\" : [1,3] }" +
-                "] }")
+            "{\"and\" : [" +
+                    "    { \">\" : [3,1] }," +
+                    "    { \"<\" : [1,3] }" +
+                    "] }"
+        )
         assertEquals("true", result)
     }
 
@@ -111,6 +123,7 @@ class JsonLogicTests {
             }
             return null
         }
+
         val jsonLogic = JsonLogic()
         jsonLogic.addOperation("plus", ::plus)
         val result = jsonLogic.apply("{\"plus\":[23, 19]}", null)
@@ -151,8 +164,16 @@ class JsonLogicTests {
                 null
             }
         }
-        val result = jsonLogic.apply(mapOf("pow" to listOf(3,2)))
+        val result = jsonLogic.apply(mapOf("pow" to listOf(3, 2)))
         assertEquals("9.0", result)
+    }
+
+    @Test
+    fun unknownCustomOperation() {
+        val jsonLogic = JsonLogic()
+        assertThrows(kotlin.NotImplementedError::class.java) {
+            jsonLogic.apply(mapOf("hello" to listOf(1, 2, 3)))
+        }
     }
 
     @Test
@@ -162,5 +183,40 @@ class JsonLogicTests {
         val data = mapOf("a" to "one")
         val result = jsonLogic.apply(logic, data)
         assertEquals("false", result)
+    }
+
+    @Test
+    fun nullTest() {
+        val jsonLogic = JsonLogic()
+        val result = jsonLogic.apply(null)
+        assertEquals("null", result)
+    }
+
+    @Test
+    fun log() {
+        val jsonLogic = JsonLogic()
+        val data = mapOf("log" to "apple")
+        val result = jsonLogic.apply(data)
+        assertEquals("apple", result)
+    }
+
+    @Test
+    fun truthyNull() {
+        assertEquals(false, null.truthy)
+    }
+
+    @Test
+    fun truthyArray() {
+        assertEquals(false, emptyArray<Int>().truthy)
+    }
+
+    @Test
+    fun truthyUnknown() {
+        assertEquals(false, emptyArray<Int>().truthy)
+    }
+
+    @Test
+    fun truthyOther() {
+        assertEquals(true, 1.truthy)
     }
 }

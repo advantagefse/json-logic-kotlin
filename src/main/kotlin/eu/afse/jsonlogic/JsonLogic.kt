@@ -40,9 +40,9 @@ class JsonLogic {
         val operator = logic.keys.firstOrNull()
         val values = logic[operator]
         return if (customOperations.keys.contains(operator))
-            (customOperations[operator])?.invoke(values.asList, data)
+            customOperations[operator]!!.invoke(values.asList, data)
         else if (specialArrayOperations.keys.contains(operator))
-            (specialArrayOperations[operator])?.invoke(values.asList, data)
+            specialArrayOperations[operator]!!.invoke(values.asList, data)
         else (operations[operator] ?: TODO("operator \"$operator\"")).invoke(when (values) {
             is List<*> -> values.map { evaluate(it, data) }
             is Map<*, *> -> evaluate(values, data)
