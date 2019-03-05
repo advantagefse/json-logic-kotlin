@@ -4,6 +4,7 @@ jdk:
 before_script:
   - chmod +x gradlew
 install:
+  - pip install --upgrade pip
   - pip install codecov
 script:
   - ./gradlew --version
