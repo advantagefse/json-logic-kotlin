@@ -1,11 +1,8 @@
-sudo: required
 language: kotlin
 jdk:
   - oraclejdk8
 before_script:
   - chmod +x gradlew
-install:
-  - pip install codecov
 script:
   - ./gradlew --version
   - ./gradlew check
