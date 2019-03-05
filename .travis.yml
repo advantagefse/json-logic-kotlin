@@ -3,9 +3,12 @@ jdk:
   - oraclejdk8
 before_script:
   - chmod +x gradlew
+install:
+  - pip install codecov
 script:
   - ./gradlew --version
   - ./gradlew check
   - ./gradlew jacocoTestReport
 after_success:
+  - codecov
   - bash <(curl -s https://codecov.io/bash)
