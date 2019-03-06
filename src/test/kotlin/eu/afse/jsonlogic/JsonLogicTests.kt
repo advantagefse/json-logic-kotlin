@@ -286,4 +286,20 @@ class JsonLogicTests {
         val result = jsonLogic.apply(data)
         assertEquals("null", result)
     }
+
+    @Test
+    fun substrExtreme() {
+        val jsonLogic = JsonLogic()
+        val data = mapOf("substr" to listOf("jsonlogic", 0, 0))
+        val result = jsonLogic.apply(data)
+        assertEquals("null", result)
+    }
+
+    @Test
+    fun invalidList() {
+        val jsonLogic = JsonLogic()
+        val data = mapOf("none" to 1)
+        val result = jsonLogic.apply(data)
+        assertEquals("true", result)
+    }
 }
