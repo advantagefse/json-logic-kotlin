@@ -40,9 +40,9 @@ class JsonLogic {
         val operator = logic.keys.firstOrNull()
         val values = logic[operator]
         return if (customOperations.keys.contains(operator))
-            customOperations[operator]!!.invoke(values.asList, data)
+            customOperations[operator]?.invoke(values.asList, data)
         else if (specialArrayOperations.keys.contains(operator))
-            specialArrayOperations[operator]!!.invoke(values.asList, data)
+            specialArrayOperations[operator]?.invoke(values.asList, data)
         else (operations[operator] ?: TODO("operator \"$operator\"")).invoke(when (values) {
             is List<*> -> values.map { evaluate(it, data) }
             is Map<*, *> -> evaluate(values, data)
@@ -100,9 +100,9 @@ class JsonLogic {
         "-" to { l, _ ->
             with(l?.doubleList ?: listOf()) {
                 when (size) {
+                    0 -> null
                     1 -> -this[0]
-                    2 -> this[0] - this[1]
-                    else -> null
+                    else -> this[0] - this[1]
                 }
             }
         },
@@ -121,7 +121,6 @@ class JsonLogic {
                     a >= 0 && b < 0 -> str.substring(a, str.length + b).asString
                     a < 0 && b < 0 -> str.substring(str.length + a, str.length + b).asString
                     a < 0 -> str.substring(str.length + a).asString
-                    b < 0 -> str.substring(str.length + b).asString
                     else -> null
                 }
                 else -> null
