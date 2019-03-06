@@ -83,6 +83,5 @@ internal val String.unStringify: String
 
 internal fun getRecursive(indexes: List<String>, data: List<Any?>): Any? = indexes.getOrNull(0)?.apply {
     val d = data.getOrNull(intValue) as? List<Any?>
-    if (d is List<*>) return getRecursive(indexes.subList(1, indexes.size), d)
-    return data.getOrNull(intValue)
+    return if (d is List<*>) getRecursive(indexes.subList(1, indexes.size), d) else data.getOrNull(intValue)
 }

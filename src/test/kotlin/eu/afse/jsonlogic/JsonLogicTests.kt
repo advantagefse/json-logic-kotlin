@@ -98,9 +98,9 @@ class JsonLogicTests {
     @Test
     fun data() {
         val jsonLogic = JsonLogic()
-        val rule = mapOf("var" to listOf("a"))
+        val logic = mapOf("var" to listOf("a"))
         val data = mapOf("a" to 1, "b" to 2)
-        val result = jsonLogic.apply(rule, data)
+        val result = jsonLogic.apply(logic, data)
         assertEquals("1", result)
     }
 
@@ -195,8 +195,8 @@ class JsonLogicTests {
     @Test
     fun log() {
         val jsonLogic = JsonLogic()
-        val data = mapOf("log" to "apple")
-        val result = jsonLogic.apply(data)
+        val logic = mapOf("log" to "apple")
+        val result = jsonLogic.apply(logic)
         assertEquals("apple", result)
     }
 
@@ -206,12 +206,17 @@ class JsonLogicTests {
     }
 
     @Test
-    fun truthyArray() {
-        assertEquals(false, emptyArray<Int>().truthy)
+    fun truthyString() {
+        assertEquals(true, "hello".truthy)
     }
 
     @Test
-    fun truthyUnknown() {
+    fun truthyArray() {
+        assertEquals(true, arrayOf(1).truthy)
+    }
+
+    @Test
+    fun truthyEmptyArray() {
         assertEquals(false, emptyArray<Int>().truthy)
     }
 
@@ -225,40 +230,40 @@ class JsonLogicTests {
     fun doubleListOther() {
         class Other()
         val jsonLogic = JsonLogic()
-        val data = mapOf("+" to listOf(1, 2, Other()))
-        val result = jsonLogic.apply(data)
+        val logic = mapOf("+" to listOf(1, 2, Other()))
+        val result = jsonLogic.apply(logic)
         assertEquals("3.0", result)
     }
 
     @Test
     fun doubleValueException() {
         val jsonLogic = JsonLogic()
-        val data = mapOf("+" to listOf(1, 2, "hello"))
-        val result = jsonLogic.apply(data)
+        val logic = mapOf("+" to listOf(1, 2, "hello"))
+        val result = jsonLogic.apply(logic)
         assertEquals("3.0", result)
     }
 
     @Test
     fun inOther() {
         val jsonLogic = JsonLogic()
-        val data = mapOf("in" to 1)
-        val result = jsonLogic.apply(data)
+        val logic = mapOf("in" to 1)
+        val result = jsonLogic.apply(logic)
         assertEquals("false", result)
     }
 
     @Test
     fun minusMore() {
         val jsonLogic = JsonLogic()
-        val data = mapOf("-" to listOf(2, 1, 1))
-        val result = jsonLogic.apply(data)
+        val logic = mapOf("-" to listOf(2, 1, 1))
+        val result = jsonLogic.apply(logic)
         assertEquals("1.0", result)
     }
 
     @Test
     fun minusNone() {
         val jsonLogic = JsonLogic()
-        val data = mapOf("-" to listOf<Int>())
-        val result = jsonLogic.apply(data)
+        val logic = mapOf("-" to listOf<Int>())
+        val result = jsonLogic.apply(logic)
         assertEquals("null", result)
     }
 
@@ -266,40 +271,49 @@ class JsonLogicTests {
     fun compareOther() {
         class Other()
         val jsonLogic = JsonLogic()
-        val data = mapOf("==" to listOf(1, Other()))
-        val result = jsonLogic.apply(data)
+        val logic = mapOf("==" to listOf(1, Other()))
+        val result = jsonLogic.apply(logic)
         assertEquals("false", result)
     }
 
     @Test
     fun compareListOfMore() {
         val jsonLogic = JsonLogic()
-        val data = mapOf("<" to listOf(1, 2, 3, 4))
-        val result = jsonLogic.apply(data)
+        val logic = mapOf("<" to listOf(1, 2, 3, 4))
+        val result = jsonLogic.apply(logic)
         assertEquals("false", result)
     }
 
     @Test
     fun substrMoreParams() {
         val jsonLogic = JsonLogic()
-        val data = mapOf("substr" to listOf("jsonlogic", 4, 5, 6))
-        val result = jsonLogic.apply(data)
+        val logic = mapOf("substr" to listOf("jsonlogic", 4, 5, 6))
+        val result = jsonLogic.apply(logic)
         assertEquals("null", result)
     }
 
     @Test
     fun substrExtreme() {
         val jsonLogic = JsonLogic()
-        val data = mapOf("substr" to listOf("jsonlogic", 0, 0))
-        val result = jsonLogic.apply(data)
+        val logic = mapOf("substr" to listOf("jsonlogic", 0, 0))
+        val result = jsonLogic.apply(logic)
         assertEquals("null", result)
     }
 
     @Test
     fun invalidList() {
         val jsonLogic = JsonLogic()
-        val data = mapOf("none" to 1)
-        val result = jsonLogic.apply(data)
+        val logic = mapOf("none" to 1)
+        val result = jsonLogic.apply(logic)
         assertEquals("true", result)
+    }
+
+    @Test
+    fun getInvalidVar() {
+        val jsonLogic = JsonLogic()
+        val logic = mapOf("var" to "a.")
+        val data = mapOf("a" to mapOf("b" to 1))
+        val result = jsonLogic.apply(logic, data)
+        assertEquals("null", result)
     }
 }
