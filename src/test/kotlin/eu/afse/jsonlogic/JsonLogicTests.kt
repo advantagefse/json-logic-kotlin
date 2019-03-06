@@ -172,8 +172,15 @@ class JsonLogicTests {
     fun unknownCustomOperation() {
         val jsonLogic = JsonLogic()
         assertThrows(kotlin.NotImplementedError::class.java) {
-            jsonLogic.apply(mapOf("hello" to listOf(1, 2, 3)))
+            jsonLogic.apply(mapOf("hello" to listOf(1, 2, 3)), safe = false)
         }
+    }
+
+    @Test
+    fun unknownCustomOperation2() {
+        val jsonLogic = JsonLogic()
+        val result = jsonLogic.apply(mapOf("hello" to listOf(1, 2, 3)), safe = true)
+        assertEquals("false", result)
     }
 
     @Test

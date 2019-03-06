@@ -21,10 +21,13 @@ class JsonLogic {
      *
      * @param logic the logic
      * @param data the data
+     * @param safe if true an exception is returned as false else exceptions are thrown
      * @return evaluation result
      */
     @JvmOverloads
-    fun apply(logic: Any?, data: Any? = null) = evaluate(logic, data).toString()
+    fun apply(logic: Any?, data: Any? = null, safe: Boolean = true) =
+        if(safe) try { evaluate(logic, data).toString() } catch (e: kotlin.NotImplementedError) { "false" }
+        else evaluate(logic, data).toString()
 
     /**
      * Add new operations http://jsonlogic.com/add_operation.html
