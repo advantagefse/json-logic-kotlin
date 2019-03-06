@@ -10,11 +10,12 @@ class JsonLogic {
      *
      * @param logic the logic as a json encoded string
      * @param data the data as a json encoded string
+     * @param safe if true an exception is returned as false else exceptions are thrown
      * @return evaluation result
      */
     @JvmOverloads
-    fun apply(logic: String?, data: String? = null) = evaluate(logic.parse as? Map<*, *>
-        ?: logic, data.parse).toString()
+    fun apply(logic: String?, data: String? = null, safe: Boolean = true) =
+        evaluateSafe(logic.parse as? Map<*, *> ?: logic, data.parse, safe).toString()
 
     /**
      * Apply logic on data and get a result
@@ -25,9 +26,7 @@ class JsonLogic {
      * @return evaluation result
      */
     @JvmOverloads
-    fun apply(logic: Any?, data: Any? = null, safe: Boolean = true) =
-        if(safe) try { evaluate(logic, data).toString() } catch (e: kotlin.NotImplementedError) { "false" }
-        else evaluate(logic, data).toString()
+    fun apply(logic: Any?, data: Any? = null, safe: Boolean = true) = evaluateSafe(logic, data, safe).toString()
 
     /**
      * Add new operations http://jsonlogic.com/add_operation.html
@@ -36,6 +35,14 @@ class JsonLogic {
      * @param lambda the operation tha handles the operator
      */
     fun addOperation(operator: String, lambda: (List<Any?>?, Any?) -> Any?) = customOperations.put(operator, lambda)
+
+    private fun evaluateSafe(logic: Any?, data: Any? = null, safe: Boolean = true) = if (safe) {
+        try {
+            evaluate(logic, data)
+        } catch (e: kotlin.NotImplementedError) {
+            false
+        }
+    } else evaluate(logic, data)
 
     private fun evaluate(logic: Any?, data: Any? = null): Any? {
         if (logic !is Map<*, *>) return logic

@@ -177,7 +177,7 @@ class JsonLogicTests {
     }
 
     @Test
-    fun unknownCustomOperation2() {
+    fun unknownCustomOperationSafe() {
         val jsonLogic = JsonLogic()
         val result = jsonLogic.apply(mapOf("hello" to listOf(1, 2, 3)), safe = true)
         assertEquals("false", result)
