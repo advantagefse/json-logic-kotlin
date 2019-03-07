@@ -284,6 +284,47 @@ class JsonLogicTests {
     }
 
     @Test
+    fun compareAnyComparables() {
+        class Other() : Comparable<Other> {
+            override fun compareTo(other: Other) = 0
+        }
+        val jsonLogic = JsonLogic()
+        val logic = mapOf("==" to listOf(Other(), Other()))
+        val result = jsonLogic.apply(logic)
+        assertEquals("true", result)
+    }
+
+    @Test
+    fun compareWithOtherComparable() {
+        class Other() : Comparable<Other> {
+            override fun compareTo(other: Other) = 0
+        }
+        val jsonLogic = JsonLogic()
+        val logic = mapOf("==" to listOf(1, Other()))
+        val result = jsonLogic.apply(logic)
+        assertEquals("false", result)
+    }
+
+    @Test
+    fun compareNullWithOtherComparable() {
+        class Other() : Comparable<Other> {
+            override fun compareTo(other: Other) = 0
+        }
+        val jsonLogic = JsonLogic()
+        val logic = mapOf("==" to listOf(null, Other()))
+        val result = jsonLogic.apply(logic)
+        assertEquals("false", result)
+    }
+
+    @Test
+    fun compareNulls() {
+        val jsonLogic = JsonLogic()
+        val logic = mapOf("==" to listOf(null, null))
+        val result = jsonLogic.apply(logic)
+        assertEquals("true", result)
+    }
+
+    @Test
     fun compareListOfMore() {
         val jsonLogic = JsonLogic()
         val logic = mapOf("<" to listOf(1, 2, 3, 4))
