@@ -323,4 +323,12 @@ class JsonLogicTests {
         val result = jsonLogic.apply(logic, data)
         assertEquals("null", result)
     }
+
+    @Test
+    fun compareBooleanWithString() {
+        val jsonLogic = JsonLogic()
+        val logic = mapOf("==" to listOf("true", true))
+        val result = jsonLogic.apply(logic)
+        assertEquals("true", result)
+    }
 }

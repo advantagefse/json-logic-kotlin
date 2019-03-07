@@ -41,6 +41,8 @@ class JsonLogic {
             evaluate(logic, data)
         } catch (e: kotlin.NotImplementedError) {
             false
+        } catch (e: java.lang.Exception) {
+            false
         }
     } else evaluate(logic, data)
 
@@ -234,6 +236,7 @@ class JsonLogic {
         a is String && b is Number -> compareValues(a.doubleValue, b.toDouble())
         a is Number && b is String -> compareValues(a.toDouble(), b.doubleValue)
         a is String && b is String -> compareValues(a.toString().unStringify, b.toString().unStringify)
+        a is Boolean || b is Boolean -> compareValues(a.truthy, b.truthy)
         else -> compareValues(a, b)
     }
 
