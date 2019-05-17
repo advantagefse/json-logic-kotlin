@@ -34,7 +34,7 @@ Typically jsonLogic will be called with a rule object and optionally a data obje
 This is a simple test, equivalent to 1 == 1
 
 ```kotlin
-JsonLogic().apply("{\"==\":[1,1]}")
+JsonLogic().apply("""{"==":[1,1]}""")
 //true
 ```
 
@@ -43,12 +43,12 @@ JsonLogic().apply("{\"==\":[1,1]}")
 An example with nested rules as strings
 ```kotlin
 val jsonLogic = JsonLogic()
-jsonLogic.apply(
-    "{\"and\" : [" +
-    "    { \">\" : [3,1] }," +
-    "    { \"<\" : [1,3] }" +
-    "] }"
-)
+jsonLogic.apply("""
+    { "and" : [
+        { ">" : [3,1] },
+        { "<" : [1,3] }
+    ] }
+""")
 //true
 ```
 
@@ -82,7 +82,7 @@ or with json string parameters
 ```kotlin
 val jsonLogic = JsonLogic()
 jsonLogic.apply(
-    "{ \"var\" : [\"a\"] }", // Rule
+    """{ "var" : ["a"] }""", // Rule
     "{ a : 1, b : 2 }" // Data
 )
 //1
@@ -92,8 +92,8 @@ You can also use the var operator to access an array by numeric index
 
 ```kotlin
 JsonLogic().apply(
-    "{\"var\" : 1 }", // Rule
-    "[ \"apple\", \"banana\", \"carrot\" ]" // Data
+    """{"var" : 1 }""", // Rule
+    """[ "apple", "banana", "carrot" ]""" // Data
 )
 //banana
 ```
@@ -112,7 +112,7 @@ jsonLogic.addOperation("sqrt") { l, _ ->
         null
     }
 }
-jsonLogic.apply("{\"sqrt\":\"9\"}")
+jsonLogic.apply("""{"sqrt":"9"}""")
 //3
 ```
 
