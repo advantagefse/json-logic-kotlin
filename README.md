@@ -1,6 +1,6 @@
 # json-logic-kotlin
 [ ![Download](https://api.bintray.com/packages/advantagefse/json-logic-kotlin/eu.afse.jsonlogic/images/download.svg) ](https://bintray.com/advantagefse/json-logic-kotlin/eu.afse.jsonlogic/_latestVersion)
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.3.21-blue.svg)](https://kotlinlang.org) 
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.3.61-blue.svg)](https://kotlinlang.org) 
 [![Build Status](https://travis-ci.com/advantagefse/json-logic-kotlin.svg?branch=master)](https://travis-ci.com/advantagefse/json-logic-kotlin)
 [![Codecov](https://codecov.io/github/advantagefse/json-logic-kotlin/coverage.svg?branch=master)](https://codecov.io/gh/advantagefse/json-logic-kotlin)
 
