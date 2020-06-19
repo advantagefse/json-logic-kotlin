@@ -1,5 +1,7 @@
 package eu.afse.jsonlogic
 
+import mu.KotlinLogging
+
 /**
  * Kotlin native implementation of http://jsonlogic.com/
  */
@@ -75,12 +77,12 @@ class JsonLogic {
         },
         "missing" to { l, d ->
             missing(d, l).toString().noSpaces.also {
-                println("'missing' of $l is $it")
+                logger.debug { "'missing' of $l is $it" }
             }
         },
         "missing_some" to { l, d ->
             missingSome(d, l).toString().noSpaces.also {
-                println("'missing_some' of $l is $it")
+                logger.debug { "'missing_some' of $l is $it" }
             }
         },
         "==" to { l, _ ->
@@ -88,7 +90,7 @@ class JsonLogic {
                 val firstArg = this?.getOrNull(0)
                 val secondArg = this?.getOrNull(1)
                 val res = compare(firstArg, secondArg) == 0
-                println("$firstArg == $secondArg is $res")
+                logger.debug { "$firstArg == $secondArg is $res" }
                 res
             }
         },
@@ -97,7 +99,7 @@ class JsonLogic {
                 val firstArg = this?.getOrNull(0)
                 val secondArg = this?.getOrNull(1)
                 val res = compareStrict(firstArg, secondArg) == 0
-                println("$firstArg === $secondArg is $res")
+                logger.debug { "$firstArg === $secondArg is $res" }
                 res
             }
         },
@@ -106,7 +108,7 @@ class JsonLogic {
                 val firstArg = this?.getOrNull(0)
                 val secondArg = this?.getOrNull(1)
                 val res = compare(firstArg, secondArg) != 0
-                println("$firstArg != $secondArg is $res")
+                logger.debug { "$firstArg != $secondArg is $res" }
                 res
             }
         },
@@ -118,73 +120,73 @@ class JsonLogic {
         ">" to { l, _ ->
             l.compareListOfThree { a, b ->
                 val res = a > b
-                println("$a > $b is $res")
+                logger.debug { "$a > $b is $res" }
                 res
             }
         },
         ">=" to { l, _ ->
             l.compareListOfThree { a, b ->
                 val res = a >= b
-                println("$a >= $b is $res")
+                logger.debug { "$a >= $b is $res" }
                 res
             }
         },
         "<" to { l, _ ->
             l.compareListOfThree { a, b ->
                 val res = a < b
-                println("$a < $b is $res")
+                logger.debug { "$a < $b is $res" }
                 res
             }
         },
         "<=" to { l, _ ->
             l.compareListOfThree { a, b ->
                 val res = a <= b
-                println("$a <= $b is $res")
+                logger.debug { "$a <= $b is $res" }
                 res
             }
         },
         "!" to { l, _ ->
             !l?.getOrNull(0).truthy.also {
-                println("!$l is $it")
+                logger.debug { "!$l is $it" }
             }
         },
         "!!" to { l, _ ->
             l?.getOrNull(0).truthy.also {
-                println("!$l is $it")
+                logger.debug { "!$l is $it" }
             }
         },
         "%" to { l, _ ->
             with(l?.doubleList ?: listOf()) {
                 val res = if (size > 1) this[0] % this[1] else null
-                println("${this[0]} % ${this[1]} is $res")
+                logger.debug { "${this[0]} % ${this[1]} is $res" }
                 res
             }
         },
         "and" to { l, _ ->
             val and = if (l?.all { it is Boolean } == true) l.all { it.truthy }
             else (l?.firstOrNull { !it.truthy } ?: l?.last())?.asString
-            println("and: $l, Result: $and")
+            logger.debug { "and: $l, Result: $and" }
             and
         },
         "or" to { l, _ ->
             val or = if (l?.all { it is Boolean } == true) l.firstOrNull { it.truthy } != null
             else (l?.firstOrNull { it.truthy } ?: l?.last())?.asString
-            println("or: $l, Result: $or")
+            logger.debug { "or: $l, Result: $or" }
             or
         },
         "?:" to { l, _ ->
             l?.recursiveIf.also {
-                println("?:$l is $it")
+                logger.debug { "?:$l is $it" }
             }
         },
         "if" to { l, _ ->
             l?.recursiveIf.also {
-                println("if $l is $it")
+                logger.debug { "if $l is $it" }
             }
         },
         "log" to { l, _ ->
             l?.getOrNull(0).also {
-                println("log $l is $it")
+                logger.debug { "log $l is $it" }
             }
         },
         "in" to { l, _ ->
@@ -195,23 +197,23 @@ class JsonLogic {
                 is List<*> -> second.contains(first)
                 else -> false
             }
-            println("$first in $second is $res")
+            logger.debug { "$first in $second is $res" }
             res
         },
         "cat" to { l, _ ->
             l?.map { if (it is Number && it.toDouble() == it.toInt().toDouble()) it.toInt() else it }
                 ?.joinToString("")?.asString.also {
-                    println("'cat' of $l is $it")
+                    logger.debug { "'cat' of $l is $it" }
                 }
         },
         "+" to { l, _ ->
             l?.doubleList?.sum().also {
-                println("'+' of $l is $it")
+                logger.debug { "'+' of $l is $it" }
             }
         },
         "*" to { l, _ ->
             l?.doubleList?.reduce { sum, cur -> sum * cur }.also {
-                println("'*' of $l is $it")
+                logger.debug { "'*' of $l is $it" }
             }
         },
         "-" to { l, _ ->
@@ -221,31 +223,31 @@ class JsonLogic {
                     1 -> -this[0]
                     else -> this[0] - this[1]
                 }
-                println("'-' of $l is $res")
+                logger.debug { "'-' of $l is $res" }
                 res
             }
         },
         "/" to { l, _ ->
             with(l?.doubleList ?: listOf()) {
                 val res = this[0] / this[1]
-                println("${this[0]} / ${this[1]} is $res")
+                logger.debug { "${this[0]} / ${this[1]} is $res" }
                 res
             }
         },
         "min" to { l, _ ->
             l?.filter { it is Number }?.minBy { (it as Number).toDouble() }.also {
-                println("min of $l is $it")
+                logger.debug { "min of $l is $it" }
             }
         },
         "max" to { l, _ ->
             l?.filter { it is Number }?.maxBy { (it as Number).toDouble() }.also {
-                println("max of $l is $it")
+                logger.debug { "max of $l is $it" }
             }
         },
         "merge" to { l, _ ->
             l?.flat.toString().noSpaces
                 .also {
-                    println("merge of $l is $it")
+                    logger.debug { "merge of $l is $it" }
                 }
         },
         "substr" to { l, _ ->
@@ -263,53 +265,69 @@ class JsonLogic {
                 }
                 else -> null
             }
-            println("substr of $l is $res")
+            logger.debug { "substr of $l is $res" }
             res
         }
     )
 
     private val specialArrayOperations = mapOf<String, (List<Any?>?, Any?) -> Any?>(
         "map" to { l, d ->
-            if (d == null) "[]"
+            val res = if (d == null)
+                "[]"
             else {
                 val data = evaluate(l?.getOrNull(0), d).toString().parse as? List<*>
                 (data?.map { evaluate(l?.getOrNull(1), it) } ?: "[]").toString().noSpaces
             }
+            logger.debug { "'map' of $l is $res" }
+            res
         },
         "filter" to { l, d ->
-            if (d == null) "[]"
+            val res = if (d == null)
+                "[]"
             else {
                 val data = evaluate(l?.getOrNull(0), d).toString().parse as? List<*>
                 (data?.filter { evaluate(l?.getOrNull(1), it).truthy }
                     ?: "[]").toString().noSpaces
             }
+            logger.debug { "'filter' of $l is $res" }
+            res
         },
         "all" to { l, d ->
-            if (d == null) false
+            val res = if (d == null)
+                false
             else {
                 val data = evaluate(l?.getOrNull(0), d).toString().parse as? List<*>
                 (data?.all { evaluate(l?.getOrNull(1), it).truthy }
                     ?: false).toString().noSpaces
             }
+            logger.debug { "'all' of $l is $res" }
+            res
         },
         "none" to { l, d ->
-            if (d == null) true
+            val res = if (d == null)
+                true
             else {
                 val data = evaluate(l?.getOrNull(0), d).toString().parse as? List<*>
                 (data?.none { evaluate(l?.getOrNull(1), it).truthy }
                     ?: true).toString().noSpaces
             }
+            logger.debug { "'none' of $l is $res" }
+            res
         },
         "some" to { l, d ->
-            if (d == null) "[]"
+            val res = if (d == null)
+                "[]"
             else {
                 val data = evaluate(l?.getOrNull(0), d).toString().parse as? List<*>
                 (data?.any { evaluate(l?.getOrNull(1), it).truthy }
                     ?: false).toString().noSpaces
             }
+            logger.debug { "'some' of $l is $res" }
+            res
         },
         "reduce" to { l, d ->
-            if (d == null) 0.0
+            val res = if (d == null)
+                0.0
             else {
                 val data = evaluate(l?.getOrNull(0), d).toString().parse as? List<Any?>
                 val logic = l?.getOrNull(1)
@@ -318,6 +336,8 @@ class JsonLogic {
                     evaluate(logic, mapOf("current" to cur, "accumulator" to sum)).toString().doubleValue
                 }
             }
+            logger.debug { "'reduce' of $l is $res" }
+            res
         }
     )
 
@@ -381,5 +401,9 @@ class JsonLogic {
                 && operator(compare(this.getOrNull(1), this.getOrNull(2)), 0)
             else -> false
         }
+    }
+
+    companion object {
+        private val logger = KotlinLogging.logger {}
     }
 }
