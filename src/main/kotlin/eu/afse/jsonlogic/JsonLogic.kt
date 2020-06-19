@@ -47,86 +47,212 @@ class JsonLogic {
     } else evaluate(logic, data)
 
     private fun evaluate(logic: Any?, data: Any? = null): Any? {
-        if (logic !is Map<*, *>) return logic
-        if (logic.isNullOrEmpty()) return data
-        val operator = logic.keys.firstOrNull()
-        val values = logic[operator]
-        return if (customOperations.keys.contains(operator))
-            customOperations[operator]?.invoke(values.asList, data)
-        else if (specialArrayOperations.keys.contains(operator))
-            specialArrayOperations[operator]?.invoke(values.asList, data)
-        else (operations[operator] ?: TODO("operator \"$operator\"")).invoke(when (values) {
-            is List<*> -> values.map { evaluate(it, data) }
-            is Map<*, *> -> evaluate(values, data)
-            else -> evaluate(listOf(values), data)
-        }.asList, data)
+        val result = if (logic !is Map<*, *>) {
+            logic
+        } else if (logic.isNullOrEmpty()) {
+            data
+        } else {
+            val operator = logic.keys.firstOrNull()
+            val values = logic[operator]
+            if (customOperations.keys.contains(operator))
+                customOperations[operator]?.invoke(values.asList, data)
+            else if (specialArrayOperations.keys.contains(operator))
+                specialArrayOperations[operator]?.invoke(values.asList, data)
+            else (operations[operator] ?: TODO("operator \"$operator\"")).invoke(when (values) {
+                is List<*> -> values.map { evaluate(it, data) }
+                is Map<*, *> -> evaluate(values, data)
+                else -> evaluate(listOf(values), data)
+            }.asList, data)
+        }
+        return result
     }
 
     private val customOperations = mutableMapOf<String, (List<Any?>?, Any?) -> Any?>()
 
     private val operations = mapOf<String, (List<Any?>?, Any?) -> Any?>(
-        "var" to { l, d -> getVar(d, l) },
-        "missing" to { l, d -> missing(d, l).toString().noSpaces },
-        "missing_some" to { l, d -> missingSome(d, l).toString().noSpaces },
-        "==" to { l, _ -> with(l?.comparableList) { compare(this?.getOrNull(0), this?.getOrNull(1)) == 0 } },
-        "===" to { l, _ -> with(l?.comparableList) { compareStrict(this?.getOrNull(0), this?.getOrNull(1)) == 0 } },
-        "!=" to { l, _ -> with(l?.comparableList) { compare(this?.getOrNull(0), this?.getOrNull(1)) != 0 } },
-        "!==" to { l, _ -> with(l?.comparableList) { compareStrict(this?.getOrNull(0), this?.getOrNull(1)) != 0 } },
-        ">" to { l, _ -> l.compareListOfThree { a, b -> a > b } },
-        ">=" to { l, _ -> l.compareListOfThree { a, b -> a >= b } },
-        "<" to { l, _ -> l.compareListOfThree { a, b -> a < b } },
-        "<=" to { l, _ -> l.compareListOfThree { a, b -> a <= b } },
-        "!" to { l, _ -> !l?.getOrNull(0).truthy },
-        "!!" to { l, _ -> l?.getOrNull(0).truthy },
+        "var" to { l, d ->
+            getVar(d, l)
+        },
+        "missing" to { l, d ->
+            missing(d, l).toString().noSpaces.also {
+                println("'missing' of $l is $it")
+            }
+        },
+        "missing_some" to { l, d ->
+            missingSome(d, l).toString().noSpaces.also {
+                println("'missing_some' of $l is $it")
+            }
+        },
+        "==" to { l, _ ->
+            with(l?.comparableList) {
+                val firstArg = this?.getOrNull(0)
+                val secondArg = this?.getOrNull(1)
+                val res = compare(firstArg, secondArg) == 0
+                println("$firstArg == $secondArg is $res")
+                res
+            }
+        },
+        "===" to { l, _ ->
+            with(l?.comparableList) {
+                val firstArg = this?.getOrNull(0)
+                val secondArg = this?.getOrNull(1)
+                val res = compareStrict(firstArg, secondArg) == 0
+                println("$firstArg === $secondArg is $res")
+                res
+            }
+        },
+        "!=" to { l, _ ->
+            with(l?.comparableList) {
+                val firstArg = this?.getOrNull(0)
+                val secondArg = this?.getOrNull(1)
+                val res = compare(firstArg, secondArg) != 0
+                println("$firstArg != $secondArg is $res")
+                res
+            }
+        },
+        "!==" to { l, _ ->
+            with(l?.comparableList) {
+                compareStrict(this?.getOrNull(0), this?.getOrNull(1)) != 0
+            }
+        },
+        ">" to { l, _ ->
+            l.compareListOfThree { a, b ->
+                val res = a > b
+                println("$a > $b is $res")
+                res
+            }
+        },
+        ">=" to { l, _ ->
+            l.compareListOfThree { a, b ->
+                val res = a >= b
+                println("$a >= $b is $res")
+                res
+            }
+        },
+        "<" to { l, _ ->
+            l.compareListOfThree { a, b ->
+                val res = a < b
+                println("$a < $b is $res")
+                res
+            }
+        },
+        "<=" to { l, _ ->
+            l.compareListOfThree { a, b ->
+                val res = a <= b
+                println("$a <= $b is $res")
+                res
+            }
+        },
+        "!" to { l, _ ->
+            !l?.getOrNull(0).truthy.also {
+                println("!$l is $it")
+            }
+        },
+        "!!" to { l, _ ->
+            l?.getOrNull(0).truthy.also {
+                println("!$l is $it")
+            }
+        },
         "%" to { l, _ ->
             with(l?.doubleList ?: listOf()) {
-                if (size > 1) this[0] % this[1] else null
+                val res = if (size > 1) this[0] % this[1] else null
+                println("${this[0]} % ${this[1]} is $res")
+                res
             }
         },
         "and" to { l, _ ->
-            if (l?.all { it is Boolean } == true) l.all { it.truthy }
+            val and = if (l?.all { it is Boolean } == true) l.all { it.truthy }
             else (l?.firstOrNull { !it.truthy } ?: l?.last())?.asString
+            println("and: $l, Result: $and")
+            and
         },
         "or" to { l, _ ->
-            if (l?.all { it is Boolean } == true) l.firstOrNull { it.truthy } != null
+            val or = if (l?.all { it is Boolean } == true) l.firstOrNull { it.truthy } != null
             else (l?.firstOrNull { it.truthy } ?: l?.last())?.asString
+            println("or: $l, Result: $or")
+            or
         },
-        "?:" to { l, _ -> l?.recursiveIf },
-        "if" to { l, _ -> l?.recursiveIf },
-        "log" to { l, _ -> l?.getOrNull(0) },
+        "?:" to { l, _ ->
+            l?.recursiveIf.also {
+                println("?:$l is $it")
+            }
+        },
+        "if" to { l, _ ->
+            l?.recursiveIf.also {
+                println("if $l is $it")
+            }
+        },
+        "log" to { l, _ ->
+            l?.getOrNull(0).also {
+                println("log $l is $it")
+            }
+        },
         "in" to { l, _ ->
             val first = l?.getOrNull(0).toString().unStringify
             val second = l?.getOrNull(1)
-            when (second) {
+            val res = when (second) {
                 is String -> second.contains(first)
                 is List<*> -> second.contains(first)
                 else -> false
             }
+            println("$first in $second is $res")
+            res
         },
         "cat" to { l, _ ->
             l?.map { if (it is Number && it.toDouble() == it.toInt().toDouble()) it.toInt() else it }
-                ?.joinToString("")?.asString
+                ?.joinToString("")?.asString.also {
+                    println("'cat' of $l is $it")
+                }
         },
-        "+" to { l, _ -> l?.doubleList?.sum() },
-        "*" to { l, _ -> l?.doubleList?.reduce { sum, cur -> sum * cur } },
+        "+" to { l, _ ->
+            l?.doubleList?.sum().also {
+                println("'+' of $l is $it")
+            }
+        },
+        "*" to { l, _ ->
+            l?.doubleList?.reduce { sum, cur -> sum * cur }.also {
+                println("'*' of $l is $it")
+            }
+        },
         "-" to { l, _ ->
             with(l?.doubleList ?: listOf()) {
-                when (size) {
+                val res = when (size) {
                     0 -> null
                     1 -> -this[0]
                     else -> this[0] - this[1]
                 }
+                println("'-' of $l is $res")
+                res
             }
         },
-        "/" to { l, _ -> with(l?.doubleList ?: listOf()) { this[0] / this[1] } },
-        "min" to { l, _ -> l?.filter { it is Number }?.minBy { (it as Number).toDouble() } },
-        "max" to { l, _ -> l?.filter { it is Number }?.maxBy { (it as Number).toDouble() } },
-        "merge" to { l, _ -> l?.flat.toString().noSpaces },
+        "/" to { l, _ ->
+            with(l?.doubleList ?: listOf()) {
+                val res = this[0] / this[1]
+                println("${this[0]} / ${this[1]} is $res")
+                res
+            }
+        },
+        "min" to { l, _ ->
+            l?.filter { it is Number }?.minBy { (it as Number).toDouble() }.also {
+                println("min of $l is $it")
+            }
+        },
+        "max" to { l, _ ->
+            l?.filter { it is Number }?.maxBy { (it as Number).toDouble() }.also {
+                println("max of $l is $it")
+            }
+        },
+        "merge" to { l, _ ->
+            l?.flat.toString().noSpaces
+                .also {
+                    println("merge of $l is $it")
+                }
+        },
         "substr" to { l, _ ->
             val str = l?.getOrNull(0).toString()
             val a = l?.getOrNull(1).toString().intValue
             val b = if (l?.size ?: 0 > 2) l?.getOrNull(2).toString().intValue else 0
-            when (l?.size) {
+            val res = when (l?.size) {
                 2 -> if (a > 0) str.substring(a).asString else str.substring(str.length + a).asString
                 3 -> when {
                     a >= 0 && b > 0 -> str.substring(a, a + b).asString
@@ -137,6 +263,8 @@ class JsonLogic {
                 }
                 else -> null
             }
+            println("substr of $l is $res")
+            res
         }
     )
 
@@ -250,7 +378,7 @@ class JsonLogic {
         when {
             this?.size == 2 -> operator(compare(this.getOrNull(0), this.getOrNull(1)), 0)
             this?.size == 3 -> operator(compare(this.getOrNull(0), this.getOrNull(1)), 0)
-                    && operator(compare(this.getOrNull(1), this.getOrNull(2)), 0)
+                && operator(compare(this.getOrNull(1), this.getOrNull(2)), 0)
             else -> false
         }
     }
