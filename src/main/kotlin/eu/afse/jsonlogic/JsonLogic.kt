@@ -123,7 +123,7 @@ class JsonLogic {
         "max" to { l, _ -> l?.filter { it is Number }?.maxBy { (it as Number).toDouble() } },
         "merge" to { l, _ -> l?.flat.toString().noSpaces },
         "substr" to { l, _ ->
-            val str = l?.getOrNull(0).toString()
+            val str = l?.getOrNull(0).toString().unStringify
             val a = l?.getOrNull(1).toString().intValue
             val b = if (l?.size ?: 0 > 2) l?.getOrNull(2).toString().intValue else 0
             when (l?.size) {
