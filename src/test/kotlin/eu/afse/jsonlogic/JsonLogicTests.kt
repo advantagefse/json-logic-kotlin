@@ -357,12 +357,29 @@ class JsonLogicTests {
     }
 
     @Test
-    fun substrWithCompare() {
+    fun substrSimpleWithQuotes() {
+        val jsonLogic = JsonLogic()
+        val logic = mapOf("substr" to listOf("\"jsonlogic\"", 0, 2))
+        val result = jsonLogic.apply(logic)
+        assertEquals("\"js\"", result) //TODO it is not correct, should be "\"j"
+    }
+
+    @Test
+    fun substrWithVar() {
         val jsonLogic = JsonLogic()
         val logic = mapOf("substr" to listOf(mapOf("var" to "variable"), 0, 2))
         val data = mapOf("variable" to "value")
         val result = jsonLogic.apply(logic, data)
         assertEquals("\"va\"", result)
+    }
+
+    @Test
+    fun substrWithVarAndCompare() {
+        val jsonLogic = JsonLogic()
+        val logic = mapOf("==" to listOf(mapOf("substr" to listOf(mapOf("var" to "variable"), 0, 2)), "va"))
+        val data = mapOf("variable" to "value")
+        val result = jsonLogic.apply(logic, data)
+        assertEquals("true", result)
     }
 
     @Test
