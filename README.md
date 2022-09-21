@@ -20,7 +20,7 @@ Maven
 <dependency>
   <groupId>eu.afse</groupId>
   <artifactId>eu.afse.jsonlogic</artifactId>
-  <version>0.9.6</version>
+  <version>0.9.7</version>
   <type>pom</type>
 </dependency>
 ```
