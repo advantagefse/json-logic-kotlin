@@ -1,6 +1,6 @@
 # json-logic-kotlin
 [ ![Download](https://search.maven.org/favicon.ico?v=3) ](https://central.sonatype.dev/artifact/io.github.advantagefse/json-logic-kotlin/0.9.7.1/versions)
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.3.21-blue.svg)](https://kotlinlang.org) 
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.7.10-blue.svg)](https://kotlinlang.org) 
 [![Build Status](https://travis-ci.com/advantagefse/json-logic-kotlin.svg?branch=master)](https://travis-ci.com/advantagefse/json-logic-kotlin)
 [![Codecov](https://codecov.io/github/advantagefse/json-logic-kotlin/coverage.svg?branch=master)](https://codecov.io/gh/advantagefse/json-logic-kotlin)
 
