@@ -1,5 +1,5 @@
 # json-logic-kotlin
-[ ![Download](https://api.bintray.com/packages/advantagefse/json-logic-kotlin/eu.afse.jsonlogic/images/download.svg) ](https://bintray.com/advantagefse/json-logic-kotlin/eu.afse.jsonlogic/_latestVersion)
+[ ![Download](https://search.maven.org/favicon.ico?v=3) ](https://central.sonatype.dev/artifact/io.github.advantagefse/json-logic-kotlin/0.9.7.1/versions)
 [![Kotlin](https://img.shields.io/badge/Kotlin-1.3.21-blue.svg)](https://kotlinlang.org) 
 [![Build Status](https://travis-ci.com/advantagefse/json-logic-kotlin.svg?branch=master)](https://travis-ci.com/advantagefse/json-logic-kotlin)
 [![Codecov](https://codecov.io/github/advantagefse/json-logic-kotlin/coverage.svg?branch=master)](https://codecov.io/gh/advantagefse/json-logic-kotlin)
@@ -11,7 +11,7 @@ This is a pure Kotlin implementation of JsonLogic http://jsonlogic.com rule engi
 Gradle
 
 ```groovy
-implementation 'eu.afse:eu.afse.jsonlogic:0.9.7'
+implementation 'io.github.advantagefse:json-logic-kotlin:0.9.7.1'
 ```
 
 Maven
@@ -20,7 +20,7 @@ Maven
 <dependency>
   <groupId>eu.afse</groupId>
   <artifactId>eu.afse.jsonlogic</artifactId>
-  <version>0.9.7</version>
+  <version>0.9.7.1</version>
   <type>pom</type>
 </dependency>
 ```
