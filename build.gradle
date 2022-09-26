@@ -8,7 +8,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'jacoco'
 
 group 'io.github.advantagefse'
-version '0.9.7'
+version '0.9.7.1'
 
 repositories {
     mavenCentral()
